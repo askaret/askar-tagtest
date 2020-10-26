@@ -1,0 +1,21 @@
+# Workflow specific for building the master / main build
+# Triggers on all commits and pull-requests on master
+
+name: MainBuild
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - name: Display the path
+      run: ./.github/scripts/Request-Build.ps1 -Branch main
+      shell: pwsh
