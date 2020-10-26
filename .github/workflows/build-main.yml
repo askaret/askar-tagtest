@@ -17,5 +17,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build main
-      run: .\scripts\Request-Build -Branch $github.ref
+      run: .\scripts\Request-Build -Branch $GITHUB_REF
       shell: pwsh
