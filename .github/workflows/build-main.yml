@@ -13,9 +13,9 @@ jobs:
   build:
 
     runs-on: windows-latest
-    - uses: actions/checkout@v2
-    
+       
     steps:
+    - uses: actions/checkout@v2
     - name: Build main
       run: .\scripts\Request-Build -Branch $github.ref
       shell: pwsh
