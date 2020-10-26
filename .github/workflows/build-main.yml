@@ -17,5 +17,5 @@ jobs:
     
     steps:
     - name: Build main
-      run: ./.github/scripts/Request-Build.ps1 -Branch $github.ref
+      run: .\scripts\Request-Build -Branch $github.ref
       shell: pwsh
