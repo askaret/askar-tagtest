@@ -16,8 +16,8 @@ jobs:
        
     steps:
     - uses: actions/checkout@v2
-    - uses: nelonoel/branch-name@v1
+    #- uses: nelonoel/branch-name@v1
     # Use branch name for whatever purpose    
     - name: Build main
-      run: .\scripts\Request-Build -Branch $BRANCH_NAME
+      run: .\scripts\Request-Build -Branch GITHUB_REF
       shell: pwsh
