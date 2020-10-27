@@ -1,10 +1,10 @@
 # Workflow specific for building the master / main build
 # Triggers on all commits on master
 
-name: Build-Main
+name: PullRequest-Main
 
 on:
-  pullrequest:
+  pull_request:
     branches: [ main ]
 
 jobs:
