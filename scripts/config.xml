@@ -1,0 +1,333 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Usage:&#xd;
+1) Replace parameter database with your database name in UPPERCASE (ex: T660D).&#xd;
+2) Set parameter dispatch_variant to FORUS or US&#xd;
+3) In section Source Code Management, set your branch name in the Project Path. Use the same letter casing for the branch as is used in GitHub.&#xd;
+4) For 1_Main_EU/US: a) Check all boolean parameters, but &quot;Flashback_to_BEFORE_INITSCRIPT_IN_JENKINS&quot; . b) Uncheck &quot;Poll SCM&quot; under Build Triggers</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>5</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>10</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.31.0">
+      <projectUrl>https://github.com/orgs/equinor/teams/dispatch-4-ever/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>database</name>
+          <description>This is the database to which this Jenkins job is connected.</description>
+          <defaultValue>!!!!!DATABASENAME!!!!!</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>dispatch_variant</name>
+          <description>Value should be FORUS if you are using EU database (T660*) or US if you are using US database (T362*).</description>
+          <defaultValue>Write FORUS or US here!!!!!!!!!!!!!!!!!!!!!!!!</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RefreshDatabase</name>
+          <description>Check this parameter to refresh the database from T362K/T660K. Build will continue after database has been refreshed.
+
+Do not check &quot;Flashback_to_BEFORE_INITSCRIPT_IN_JENKINS&quot; when refreshing database.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>Flashback_to_BEFORE_INITSCRIPT_IN_JENKINS</name>
+          <description>Check this parameter if you want to flashback the database to the first restore point in build. 
+This value is hardcoded to BEFORE_INIT_IN_JENKINS.
+When flashing back to BEFORE_INIT_IN_JENKINS, init-script will run again.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>InstallBlackbox</name>
+          <description>Tick the checkbox to install the Blackbox test framework and run the Blackbox OLD-tests. This step only runs once. Must run before you run the  release script (if any).</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RunReleaseScript</name>
+          <description>Check if you would like to run release script. It runs the release script with the highest version number (sorted by alphanumerics).</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RunBlackboxNew</name>
+          <description>Check this to run the Blackbox tests</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RunSourceCodeVerification</name>
+          <description>Check this parameter to verify that source code in plsql folder (tfs) is the same as in the database. This is done by schema compare tests started from nUnit.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@4.4.4">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>git@github.com:equinor/dispatch-client-server.git</url>
+        <credentialsId>2e67e1a4-ff6c-4e77-bd40-916b2484d2ff</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/dev-yourBranch!!!!!!!!!!!!!!!!!!!!!!</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.CleanBeforeCheckout>
+        <deleteUntrackedNestedRepositories>false</deleteUntrackedNestedRepositories>
+      </hudson.plugins.git.extensions.impl.CleanBeforeCheckout>
+    </extensions>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>* * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.msbuild.MsBuildBuilder plugin="msbuild@1.29">
+      <msBuildName>.Net 4.6.1</msBuildName>
+      <msBuildFile>Build.Net/Dispatch/Dispatch.Builder.sln</msBuildFile>
+      <cmdLineArgs>/t:Clean /t:Rebuild /v:Quiet /p:Configuration=Release</cmdLineArgs>
+      <buildVariablesAsProperties>true</buildVariablesAsProperties>
+      <continueOnBuildFailure>false</continueOnBuildFailure>
+      <unstableIfWarnings>false</unstableIfWarnings>
+      <doNotUseChcpCommand>false</doNotUseChcpCommand>
+    </hudson.plugins.msbuild.MsBuildBuilder>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>if ($env:RefreshDatabase -eq &quot;true&quot;) {
+   cd sql/Scripts/Utils/Jenkins
+   .\RequestRefreshOfDatabase.ps1
+}  </command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.tasks.BatchFile>
+      <command>DispatchBuilder build !!!!!DATABASENAME!!!!!</command>
+      <configuredLocalRules/>
+    </hudson.tasks.BatchFile>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#Do initial tests and abort build if any test fails
+
+cd sql/Scripts/Utils/Jenkins/JenkinsPreBuildCheck
+.\JenkinsPreBuildCheck.ps1
+</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#Flashback to first restore point (hard coded to BEFORE_INIT_IN_JENKINS) upon request in Jenkins project build parameter
+
+cd sql/Scripts/Utils/Jenkins
+
+#Create restore point as first thing in build job. Will fail by design after first run on fresh database copy
+$stmt = &quot;create restore point BEFORE_INITSCRIPT_IN_JENKINS;&quot;
+$res = ($stmt | sqlplus -s dispatch/$env:DISPATCH_COMPRESSED_DB_PWD@$env:database.statoil.no)	
+
+if ($env:Flashback_to_BEFORE_INITSCRIPT_IN_JENKINS -eq &quot;true&quot;) {
+   .\RequestFlashbackToRestorePoint.ps1 $env:database &apos;BEFORE_INITSCRIPT_IN_JENKINS&apos; &apos;TRUE&apos;
+   if ($lastexitcode -eq 1) {exit $lastexitcode}
+
+   #Wait for flashback to complete before proceeding. 45 seconds between each connnection attempt to avoid account locking.
+  .\HasFlashbackCompleted.ps1 $env:database $env:DISPADMIN_COMPRESSED_DB_PASSWORD $env:DISPATCH_COMPRESSED_DB_PWD 45
+}
+</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#Run init script if it hasn&apos;t been run and latest release script if it hasn&apos;t been run
+
+$homeDir = (Get-Item -Path &quot;.\&quot; -Verbose).FullName
+
+&quot;*********About to run init script in database $env:database. It will skip this step if it has already been run*************&quot;
+cd &quot;sql\Scripts\Utils\Initscript\Dispatch for all variants&quot;
+$res = sqlplus dispatch/$env:DISPATCH_COMPRESSED_DB_PWD@$env:database.statoil.no &apos;@Init_DB_Dispatch.sql&apos;
+$res=$res.Replace(&quot;ORA-01017: invalid username/password;&quot;,&quot;Init script has already been run.&quot;).Replace(&quot;ERROR:&quot;,&quot;&quot;).Replace(&quot;logon denied&quot;,&quot;&quot;).Replace(&quot;Enter user-name:&quot;,&quot;&quot;)
+$res
+
+&quot;*********Update database overview with Jenkins job name*************&quot;
+$stmt = &quot;update TECH.ENVIRONMENTS set ENV_NAME = &apos;$ENV:JOB_NAME&apos; where upper(DB_NAME) = upper(&apos;$env:database&apos;) and NVL(ENV_NAME,&apos;dummy&apos;) &lt;&gt; &apos;$ENV:JOB_NAME&apos;;&quot;
+$res = ($stmt |sqlplus tech/$env:TECH_PWD@dismodx.statoil.no)</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#BLACKBOX setup is handled here
+.\sql\Scripts\Utils\Blackbox\Setup\BlackboxSetupAndRunOldTestsFromJenkins.ps1</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#Set restore point here so that we can flashback after creating blackbox tests. These restore points statements will fail by design after the first time they have been run
+
+$stmt = &quot;create restore point AFTER_BLACKBOX_OLD;&quot;
+$res = $stmt | sqlplus dispatch/$env:DB_PASSWORD@$env:database.statoil.no
+$res
+
+
+cd sql/Scripts/Utils/Jenkins
+
+if (($env:database -ieq &quot;T362M&quot; -Or $env:database -ieq &quot;T660M&quot; -Or $env:database -ieq &quot;T362L&quot; -Or $env:database -ieq &quot;T660L&quot;) -and $env:Flashback_to_BEFORE_INITSCRIPT_IN_JENKINS -eq &quot;false&quot;) {
+   .\RequestFlashbackToRestorePoint.ps1 $env:database &apos;AFTER_BLACKBOX_OLD&apos; &apos;FALSE&apos;
+   if ($lastexitcode -eq 1) {exit $lastexitcode}
+
+   .\HasFlashbackCompleted.ps1 $env:database $env:DISPADMIN_DEV_PASSWORD $env:DB_PASSWORD 10
+   if ($lastexitcode -eq 1) {exit $lastexitcode}
+}</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>&quot;*********About to run latest release script in database $env:database if not already applied. *************&quot;
+
+$homeDir = (Get-Item -Path &quot;.\&quot; -Verbose).FullName
+
+if ($env:RunReleaseScript -eq &quot;true&quot;) {
+   $releaseName = (Get-ChildItem $homeDir\sql\Scripts -filter &quot;Release*&quot;  | ? { $_.Name } | sort Name -desc | select Name -f 1).Name
+   $stmt = &quot;set heading off`n&quot;
+   $stmt = $stmt + &quot;select pvcs_revision from dbcr_log order by release_date desc fetch first 1 rows only;&quot;
+   $res = $stmt |sqlplus -s dispatch/$env:DB_PASSWORD@$env:database.statoil.no
+   if ($releaseName -ne $res[1]) {
+      &quot;Running release script....&quot; 
+      cd $homeDir\sql\Scripts\$releaseName
+      write-host &quot;Current directory: &quot; +  (Get-Item -Path &quot;.\&quot; -Verbose).FullName
+      $releaseScript = $releaseName.replace(&quot;Release&quot;, &quot;Dispatch Release script&quot;)+&quot;.sql&quot;
+      &quot;Running release script: &quot; + $releaseScript
+      &amp; ..\Jenkins\main.bat &quot;dispatch/$env:DB_PASSWORD@$env:database.statoil.no&quot; &quot;$releaseScript&quot;
+      &quot;Done Running release script....&quot; 
+   }
+   else {
+      &quot;Latest release script has already been run. Continuing without running release script.&quot;
+   }
+}</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#Blackcode setup and code base indexing
+.\sql\Scripts\Utils\Blackcode\Scripts\MasterBlackcodeJenkins.ps1</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>$numPackagesToAnalyse = 50
+
+.\sql\Scripts\Utils\Toad\PrepareIniFromTemplate.ps1 -p_databaseName $env:database -p_jenkinsJobWorkspaceFolder $ENV:WORKSPACE -p_dispatchPwd $env:DB_PASSWORD -p_jenkinsBuildNumber $ENV:BUILD_NUMBER -p_numberOfPackagesToAnalyse $numPackagesToAnalyse </command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.tasks.BatchFile>
+      <command>REM echo start code analysis&#xd;
+&#xd;
+path=C:\Program Files (x86)\Quest Software\Toad for Oracle 12.1;%path%&#xd;
+&#xd;
+REM Removing folder and files to force regeneration of code analysis files&#xd;
+IF exist C:\TFS\Builds\CodeAnalysisMetricsFiles\%database% (rmdir /s /q C:\TFS\Builds\CodeAnalysisMetricsFiles\%database%)&#xd;
+&#xd;
+REM Recreating folder for code analysis files&#xd;
+IF not exist C:\TFS\Builds\CodeAnalysisMetricsFiles\%database% (mkdir C:\TFS\Builds\CodeAnalysisMetricsFiles\%database%)&#xd;
+&#xd;
+&#xd;
+cd &quot;C:\Appl\continous-integration\Jenkins\jobs\%JOB_NAME%\workspace\sql\Scripts\Utils\Toad&quot;&#xd;
+toad.exe -a &quot;DevOpsCodeAnalysisApp | DevOpsCodeAnalysis.ini&quot;&#xd;
+&#xd;
+REM echo done code analysis</command>
+      <configuredLocalRules/>
+    </hudson.tasks.BatchFile>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#Run Blackbox NEW 
+
+if ($env:RunBlackboxNew -eq &quot;true&quot;) { 
+   $stopWatch = [Diagnostics.Stopwatch]::StartNew()
+   cd sql/Scripts/Utils/Blackbox
+   .\BB_RunEuAndUs.ps1 &quot;NEW&quot; $ENV:DB_PASSWORD $ENV:WORKSPACE $ENV:DATABASE $ENV:dispatch_variant
+   sqlplus dispatch/$env:DB_PASSWORD@$env:database.statoil.no &apos;@BB_VerifyTestResult.sql&apos;
+
+   &quot;Time spent running Blackbox NEW tests:&quot;
+   $stopWatch.Stop()
+   $stopWatch.Elapsed
+}</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.tasks.BatchFile>
+      <command>DispatchBuilder run_tests !!!!!DATABASENAME!!!!!</command>
+      <configuredLocalRules/>
+    </hudson.tasks.BatchFile>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#Write to Tech-database the hash values of exe- and dll-files built by Jenkins and for the same files on test servers. Information is used to verify that files (most important when testing services) are the aligned between Jenkins and test server
+.\sql\Scripts\Utils\Jenkins\FileVersion\FileVersion.ps1 $env:TECH_PWD $ENV:WORKSPACE $ENV:JOB_NAME $ENV:TFS_PROJECTPATH $ENV:BUILD_NUMBER $env:database</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>###Check if source code in TFS is different from source code in database.####
+
+if ($env:RunSourceCodeVerification -eq &quot;true&quot; -Or $env:database -ieq &quot;T362B&quot; -Or $env:database -ieq &quot;T660B&quot;) { 
+  .\sql\Scripts\Utils\Jenkins\SourceCodeTest\SourceCodeVerification.ps1 $env:DISPATCH_SCHEMA_TEST_PWD $ENV:DB_PASSWORD $ENV:DATABASE $ENV:WORKSPACE
+}</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+    <hudson.plugins.powershell.PowerShell plugin="powershell@1.4">
+      <command>#This step writes the Jenkins console output to table blackcode.JENKINS_CONSOLE_OUTPUT. Used for schema testing
+.\sql\Scripts\Utils\Blackcode\Scripts\JenkinsConsoleOutputSearch.ps1  $env:DB_PASSWORD $env:database $ENV:WORKSPACE $ENV:JOB_NAME $ENV:BUILD_NUMBER
+</command>
+      <configuredLocalRules/>
+      <useProfile>false</useProfile>
+      <stopOnError>false</stopOnError>
+    </hudson.plugins.powershell.PowerShell>
+  </builders>
+  <publishers>
+    <hudson.plugins.nunit.NUnitPublisher plugin="nunit@0.27">
+      <testResultsPattern>**/TestResult*.xml</testResultsPattern>
+      <debug>false</debug>
+      <keepJUnitReports>false</keepJUnitReports>
+      <skipJUnitArchiver>false</skipJUnitArchiver>
+      <healthScaleFactor>1.0</healthScaleFactor>
+      <failIfNoResults>true</failIfNoResults>
+      <failedTestsFailBuild>false</failedTestsFailBuild>
+    </hudson.plugins.nunit.NUnitPublisher>
+    <hudson.tasks.Mailer plugin="mailer@1.32.1">
+      <recipients></recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers>
+    <com.michelin.cio.hudson.plugins.maskpasswords.MaskPasswordsBuildWrapper/>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.11.5"/>
+  </buildWrappers>
+</project>
