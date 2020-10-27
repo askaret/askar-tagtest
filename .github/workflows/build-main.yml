@@ -19,5 +19,5 @@ jobs:
     #- uses: nelonoel/branch-name@v1
     # Use branch name for whatever purpose    
     - name: Build main
-      run: .\scripts\Request-Build -Branch GITHUB_REF
+      run: .\scripts\Request-Build -Branch  ${{ secrets.DEPLOY_TOKEN }}
       shell: pwsh
