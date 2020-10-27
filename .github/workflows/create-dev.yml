@@ -1,0 +1,20 @@
+
+# Workflow specific for building the development branches
+# Triggers on all branches named dev-***
+
+name: Create-Dev
+
+on:
+  create:
+    branches: [ dev-* ]
+
+jobs:
+  create-dev:
+
+    runs-on: windows-latest
+       
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create development branch and build
+      run: .\scripts\Create-DevBuild -Branch ${{ github.ref }}
+      shell: pwsh
