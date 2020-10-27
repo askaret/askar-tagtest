@@ -1,0 +1,20 @@
+# Workflow specific for building the master / main build
+# Triggers on all commits on master
+
+name: Release-Main
+
+on:
+  release:
+    types: [released]
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+       
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build main
+      run: .\scripts\Request-Release ${{ github.ref }}
+      shell: pwsh
