@@ -1,11 +1,8 @@
-if ($args.count -ne 1) {
-    Write-Host "Missing tag specifier" 
-    exit
-}
+param (
+        [Parameter(Mandatory)]
+        [string]$Tag,
+        [Parameter(Mandatory)]
+        [string]$Branch
+    )
 
-$branch = $args[0].Split("/")
-$gitTag = $branch[$branch.count - 1]
-$gitBranch = git branch --contains $gitTag
-
-Write-Host "Creating new PRE-Release from tag $($gitTag)"
-Write-Host "Guessing $($gitBranch) is the git branch"
+Write-Host "Creating release $($Tag) from branch $($Branch)"
