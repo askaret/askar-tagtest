@@ -5,7 +5,7 @@ name: Release-Main
 
 on:
   release:
-    types: [published]
+    types: [released]
     branches: [ main ]
 
 jobs:
