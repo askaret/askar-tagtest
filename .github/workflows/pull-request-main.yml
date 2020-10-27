@@ -1,0 +1,19 @@
+# Workflow specific for building the master / main build
+# Triggers on all commits on master
+
+name: Build-Main
+
+on:
+  pullrequest:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+       
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build main
+      run: .\scripts\Request-PullRequest ${{ github.ref }}
+      shell: pwsh
