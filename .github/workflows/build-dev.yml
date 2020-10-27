@@ -1,0 +1,20 @@
+
+# Workflow specific for building the master / main build
+# Triggers on all commits on master
+
+name: Build-Dev
+
+on:
+  push:
+    branches: [ dev-* ]
+
+jobs:
+  build-dev:
+
+    runs-on: windows-latest
+       
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build main
+      run: .\scripts\Request-DevBuild ${{ github.ref }}
+      shell: pwsh
