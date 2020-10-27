@@ -1,12 +1,10 @@
 # Workflow specific for building the master / main build
-# Triggers on all commits and pull-requests on master
+# Triggers on all commits on master
 
-name: MainBuild
+name: Build-Main
 
 on:
   push:
-    branches: [ main, test ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -16,8 +14,6 @@ jobs:
        
     steps:
     - uses: actions/checkout@v2
-    #- uses: nelonoel/branch-name@v1
-    # Use branch name for whatever purpose    
     - name: Build main
       run: .\scripts\Request-Build ${{ github.ref }}
       shell: pwsh
