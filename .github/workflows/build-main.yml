@@ -5,7 +5,7 @@ name: MainBuild
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, test ]
   pull_request:
     branches: [ main ]
 
@@ -16,6 +16,8 @@ jobs:
        
     steps:
     - uses: actions/checkout@v2
+    #- uses: nelonoel/branch-name@v1
+    # Use branch name for whatever purpose    
     - name: Build main
-      run: .\scripts\Request-Build -Branch $GITHUB_REF
+      run: .\scripts\Request-Build ${{ github.ref }}
       shell: pwsh
