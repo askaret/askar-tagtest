@@ -1,6 +1,6 @@
 
-# Workflow specific for building the master / main build
-# Triggers on all commits on master
+# Workflow specific for building the development branches
+# Triggers on all branches named dev-***
 
 name: Build-Dev
 
@@ -15,6 +15,6 @@ jobs:
        
     steps:
     - uses: actions/checkout@v2
-    - name: Build main
-      run: .\scripts\Request-DevBuild ${{ github.ref }}
+    - name: Build development branch
+      run: .\scripts\Request-DevBuild -Branch ${{ github.ref }}
       shell: pwsh
