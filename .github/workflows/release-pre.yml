@@ -14,5 +14,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build main
-      run: .\scripts\Request-PreRelease -Tag github.ref -Branch ${{ github.event.release.target_commitish }}
+      run: .\scripts\Request-PreRelease -Tag ${{ github.ref }} -Branch ${{ github.event.release.target_commitish }}
       shell: pwsh
