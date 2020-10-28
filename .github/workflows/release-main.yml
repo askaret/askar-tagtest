@@ -6,8 +6,7 @@ name: Release-Main
 on:
   release:
     types: [released]
-    branches: [ main ]
-
+    
 jobs:
   build:
 
