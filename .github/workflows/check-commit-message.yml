@@ -11,5 +11,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Create development branch and build
-      run: .\scripts\Check-CommitMessage -GithubContext ${{ toJson(github) }}
+      run: .\scripts\Check-CommitMessage -GithubContext ${{ github }}
       shell: pwsh
