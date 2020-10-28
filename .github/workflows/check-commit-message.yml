@@ -1,15 +1,15 @@
-name: Build-Main
+name: Main-Check-Commit
 
 on:
   push:
     branches: [ main ]
 jobs:
-  create-dev:
+  check-commit:
 
     runs-on: windows-latest
     
     steps:
     - uses: actions/checkout@v2
     - name: Create development branch and build
-      run: .\scripts\Check-CommitMessage -GithubContext ${{ github }}
+      run: .\scripts\Check-CommitMessage -GithubContext ${{ github.event }}
       shell: pwsh
